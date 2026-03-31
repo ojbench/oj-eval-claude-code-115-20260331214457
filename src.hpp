@@ -76,8 +76,18 @@ class unique_ptr {
         return *ptr;
     }
 
+    // 重载 * 运算符(解引用)，返回指针指向的对象的引用 - const version
+    const _Tp &operator*() const {
+        return *ptr;
+    }
+
     // 重载 -> 运算符(成员访问)，返回指针指向的对象的地址
     _Tp *operator->() {
+        return ptr;
+    }
+
+    // 重载 -> 运算符(成员访问)，返回指针指向的对象的地址 - const version
+    const _Tp *operator->() const {
         return ptr;
     }
 };
@@ -85,26 +95,15 @@ class unique_ptr {
 // 对于一个 unique_ptr，你最多只能存一个指针
 static_assert(sizeof(unique_ptr<int>) <= sizeof(void *)) ;
 
-// 创建一个 unique_ptr，指向一个用 new 分配的 _Tp 对象
-template <typename _Tp>
-unique_ptr <_Tp> make_unique(const _Tp &val) {
-    return unique_ptr<_Tp>(new _Tp(val));
-}
-
-// Bonus: (不作为考察内容)
-// (如果写了,请删除上面的这个 make_unique)
-// (否则,请删除下面的这个 make_unique)
-// 可变长参数列表 + 万能引用
+// Bonus: 可变长参数列表 + 万能引用
 // 创建一个 unique_ptr，指向一个用 new 分配的 _Tp 对象
 // 参数列表长度可变，且有左值引用和右值引用两种版本
 // 当传入左值 T &， Args 类型被推导为 T &
 // 当传入右值 T &&，Args 类型被推导为 T
 // 你需要了解如何用 std::forward 实现完美转发
-/*
 template <typename _Tp, typename... Args>
 unique_ptr <_Tp> make_unique(Args &&... args) {
     return unique_ptr<_Tp>(new _Tp(std::forward<Args>(args)...));
 }
-*/
 
 } // namespace sjtu
